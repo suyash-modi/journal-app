@@ -5,6 +5,7 @@ import net.modi.journalApp.entity.User;
 import net.modi.journalApp.repository.UserRepository;
 import net.modi.journalApp.service.JournalEntryService;
 import net.modi.journalApp.service.UserService;
+import net.modi.journalApp.service.WeatherService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WeatherService weatherService;
 
 //    @GetMapping
 //    public List<User> getAllUsers()
@@ -62,5 +66,13 @@ public class UserController {
         String userName=authentication.getName();
         userRepository.deleteByUserName(userName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> greeting()
+    {
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String userName=authentication.getName();
+        return new ResponseEntity<>("Hi "+userName+" weather feels like : "+weatherService.getWeather("Italy").getCurrent().getFeelslike(),HttpStatus.OK);
     }
 }
